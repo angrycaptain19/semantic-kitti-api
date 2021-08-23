@@ -60,17 +60,17 @@ class LaserScan:
     # reset just in case there was an open structure
     self.reset()
 
-    # check filename is string
-    if not isinstance(filename, str):
-      raise TypeError("Filename should be string type, "
-                      "but was {type}".format(type=str(type(filename))))
+    # # check filename is string
+    # if not isinstance(filename, str):
+    #   raise TypeError("Filename should be string type, "
+    #                   "but was {type}".format(type=str(type(filename))))
 
-    # check extension is a laserscan
-    if not any(filename.endswith(ext) for ext in self.EXTENSIONS_SCAN):
-      raise RuntimeError("Filename extension is not valid scan file.")
+    # # check extension is a laserscan
+    # if not any(filename.endswith(ext) for ext in self.EXTENSIONS_SCAN):
+    #   raise RuntimeError("Filename extension is not valid scan file.")
 
     # if all goes well, open pointcloud
-    scan = np.fromfile(filename, dtype=np.float32)
+    scan = np.frombuffer(filename, dtype=np.float32)
     scan = scan.reshape((-1, 4))
 
     # put in attribute
@@ -219,17 +219,17 @@ class SemLaserScan(LaserScan):
   def open_label(self, filename):
     """ Open raw scan and fill in attributes
     """
-    # check filename is string
-    if not isinstance(filename, str):
-      raise TypeError("Filename should be string type, "
-                      "but was {type}".format(type=str(type(filename))))
+    # # check filename is string
+    # if not isinstance(filename, str):
+    #   raise TypeError("Filename should be string type, "
+    #                   "but was {type}".format(type=str(type(filename))))
 
-    # check extension is a laserscan
-    if not any(filename.endswith(ext) for ext in self.EXTENSIONS_LABEL):
-      raise RuntimeError("Filename extension is not valid label file.")
+    # # check extension is a laserscan
+    # if not any(filename.endswith(ext) for ext in self.EXTENSIONS_LABEL):
+    #   raise RuntimeError("Filename extension is not valid label file.")
 
     # if all goes well, open label
-    label = np.fromfile(filename, dtype=np.uint32)
+    label = np.frombuffer(filename, dtype=np.uint32)
     label = label.reshape((-1))
 
     # set it
