@@ -1,7 +1,7 @@
 # This file is covered by the LICENSE file in the root of this project.
 labels: 
-  0 : "unlabeled"
-  1 : "outlier"
+  0: "unlabeled"
+  1: "outlier"
   10: "car"
   11: "bicycle"
   13: "bus"
