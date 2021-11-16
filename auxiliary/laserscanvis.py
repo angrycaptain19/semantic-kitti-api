@@ -222,7 +222,7 @@ class LaserScanVis:
             if self.offset < 0:
                 self.offset = self.total - 1
             self.update_scan()
-        elif event.key == "Q" or event.key == "Escape":
+        elif event.key in ["Q", "Escape"]:
             self.destroy()
 
     def draw(self, event):

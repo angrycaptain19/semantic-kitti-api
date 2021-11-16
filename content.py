@@ -48,19 +48,13 @@ if __name__ == "__main__":
     sequences = CFG["split"]["train"]
     print("Analizing sequences", sequences)
 
-    # create content accumulator
-    accum = {}
     total = 0.0
-    for key, _ in CFG["labels"].items():
-        accum[key] = 0
-
+    # create content accumulator
+    accum = {key: 0 for key, _ in CFG["labels"].items()}
     # itearate over sequences
     for seq in sequences:
-        seq_accum = {}
         seq_total = 0.0
-        for key, _ in CFG["labels"].items():
-            seq_accum[key] = 0
-
+        seq_accum = {key: 0 for key, _ in CFG["labels"].items()}
         # make seq string
         print("*" * 80)
         seqstr = "{0:02d}".format(int(seq))

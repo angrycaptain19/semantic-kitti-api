@@ -132,14 +132,16 @@ if __name__ == "__main__":
             print("Ignoring xentropy class ", x_cl, " in IoU evaluation")
 
     # create evaluator
-    if FLAGS.backend == "torch":
-        from auxiliary.torch_ioueval import iouEval
-
-        evaluator = iouEval(nr_classes, ignore)
     if FLAGS.backend == "numpy":
         from auxiliary.np_ioueval import iouEval
 
         evaluator = iouEval(nr_classes, ignore)
+    elif FLAGS.backend == "torch":
+        from auxiliary.torch_ioueval import iouEval
+
+        evaluator = iouEval(nr_classes, ignore)
+        print("Backend for evaluator should be one of ", str(backends))
+        quit()
     else:
         print("Backend for evaluator should be one of ", str(backends))
         quit()
@@ -188,11 +190,9 @@ if __name__ == "__main__":
     # assert(len(label_names) == len(pred_names))
 
     progress = 10
-    count = 0
     print("Evaluating sequences: ", end="", flush=True)
     # open each file, get the tensor, and make the iou comparison
-    for label_file, pred_file in zip(label_names[:], pred_names[:]):
-        count += 1
+    for count, (label_file, pred_file) in enumerate(zip(label_names[:], pred_names[:]), start=1):
         if 100 * count / len(label_names) > progress:
             print("{:d}% ".format(progress), end="", flush=True)
             progress += 10
@@ -225,20 +225,20 @@ if __name__ == "__main__":
     print("*" * 80)
     print("below can be copied straight for paper table")
     for i, jacc in enumerate(class_jaccard):
-        if i not in ignore:
-            if int(class_inv_remap[i]) > 250:
-                sys.stdout.write("iou_moving: {jacc:.3f}".format(jacc=jacc.item()))
+        if i not in ignore and int(class_inv_remap[i]) > 250:
+            sys.stdout.write("iou_moving: {jacc:.3f}".format(jacc=jacc.item()))
     sys.stdout.write("\n")
     sys.stdout.flush()
 
     # if codalab is necessary, then do it
     # for moving object detection, we only care about the results of moving objects
     if FLAGS.codalab is not None:
-        results = {}
-        for i, jacc in enumerate(class_jaccard):
-            if i not in ignore:
-                if int(class_inv_remap[i]) > 250:
-                    results["iou_moving"] = float(jacc)
+        results = {
+            "iou_moving": float(jacc)
+            for i, jacc in enumerate(class_jaccard)
+            if i not in ignore and int(class_inv_remap[i]) > 250
+        }
+
         # save to file
         output_filename = os.path.join(FLAGS.codalab, "scores.txt")
         with open(output_filename, "w") as yaml_file:
