@@ -22,20 +22,18 @@ def parse_calibration(filename):
     """
     calib = {}
 
-    calib_file = open(filename)
-    for line in calib_file:
-        key, content = line.strip().split(":")
-        values = [float(v) for v in content.strip().split()]
+    with open(filename) as calib_file:
+        for line in calib_file:
+            key, content = line.strip().split(":")
+            values = [float(v) for v in content.strip().split()]
 
-        pose = np.zeros((4, 4))
-        pose[0, 0:4] = values[0:4]
-        pose[1, 0:4] = values[4:8]
-        pose[2, 0:4] = values[8:12]
-        pose[3, 3] = 1.0
+            pose = np.zeros((4, 4))
+            pose[0, 0:4] = values[0:4]
+            pose[1, 0:4] = values[4:8]
+            pose[2, 0:4] = values[8:12]
+            pose[3, 3] = 1.0
 
-        calib[key] = pose
-
-    calib_file.close()
+            calib[key] = pose
 
     return calib
 
@@ -177,7 +175,7 @@ if __name__ == "__main__":
 
             # prepare single numpy array for all points that can be written at once.
             num_concat_points = points.shape[0]
-            num_concat_points += sum([past["points"].shape[0] for past in history])
+            num_concat_points += sum(past["points"].shape[0] for past in history)
             concated_points = np.zeros((num_concat_points * 4), dtype=np.float32)
             concated_labels = np.zeros((num_concat_points), dtype=np.uint32)
 
@@ -223,7 +221,7 @@ if __name__ == "__main__":
 
             if 100.0 * i / len(scan_files) >= progress:
                 print(".", end="", flush=True)
-                progress = progress + 10
+                progress += 10
         print("finished.")
 
     print("execution time: {}".format(time.time() - start_time))

@@ -131,12 +131,12 @@ if __name__ == "__main__":
             print("Ignoring xentropy class ", x_cl, " in IoU evaluation")
 
     # create evaluator
-    if FLAGS.backend == "torch":
-        from auxiliary.torch_ioueval import iouEval
+    if FLAGS.backend == "numpy":
+        from auxiliary.np_ioueval import iouEval
 
         evaluator = iouEval(nr_classes, ignore)
-    elif FLAGS.backend == "numpy":
-        from auxiliary.np_ioueval import iouEval
+    elif FLAGS.backend == "torch":
+        from auxiliary.torch_ioueval import iouEval
 
         evaluator = iouEval(nr_classes, ignore)
     else:
@@ -187,11 +187,9 @@ if __name__ == "__main__":
     assert len(label_names) == len(pred_names)
 
     progress = 10
-    count = 0
     print("Evaluating sequences: ", end="", flush=True)
     # open each file, get the tensor, and make the iou comparison
-    for label_file, pred_file in zip(label_names, pred_names):
-        count += 1
+    for count, (label_file, pred_file) in enumerate(zip(label_names, pred_names), start=1):
         if 100 * count / len(label_names) > progress:
             print("{:d}% ".format(progress), end="", flush=True)
             progress += 10
@@ -249,9 +247,7 @@ if __name__ == "__main__":
 
     # if codalab is necessary, then do it
     if FLAGS.codalab is not None:
-        results = {}
-        results["accuracy_mean"] = float(m_accuracy)
-        results["iou_mean"] = float(m_jaccard)
+        results = {'accuracy_mean': float(m_accuracy), 'iou_mean': float(m_jaccard)}
         for i, jacc in enumerate(class_jaccard):
             if i not in ignore:
                 results["iou_" + class_strings[class_inv_remap[i]]] = float(jacc)

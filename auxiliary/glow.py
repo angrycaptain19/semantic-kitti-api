@@ -201,11 +201,8 @@ class GlShader:
 
     @staticmethod
     def fromFile(shader_type, filename):
-        f = open(filename)
-        source = "\n".join(f.readlines())
-        # todo: preprocess.
-        f.close()
-
+        with open(filename) as f:
+            source = "\n".join(f.readlines())
         return GlShader(shader_type, source)
 
 
